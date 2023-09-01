@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Firebase
 
 struct Post: Hashable, Codable, Identifiable {
     let id: String
@@ -13,7 +14,7 @@ struct Post: Hashable, Codable, Identifiable {
     let ownerUID: String
     var likes: Int
     let imageUrl: String
-    let timeStamp: Date
+    let timeStamp: Timestamp
     var user: User?
 }
 
@@ -25,42 +26,42 @@ extension Post {
               ownerUID: NSUUID().uuidString,
               likes: 223,
               imageUrl: "love2",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[0]),
         .init(id: NSUUID().uuidString,
               caption: "love myself",
               ownerUID: NSUUID().uuidString,
               likes: 143,
               imageUrl: "xaya1",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[1]),
         .init(id: NSUUID().uuidString,
               caption: "love myself",
               ownerUID: NSUUID().uuidString,
               likes: 403,
               imageUrl: "xaya2",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[1]),
         .init(id: NSUUID().uuidString,
               caption: "my favourite human",
               ownerUID: NSUUID().uuidString,
               likes: 431,
               imageUrl: "love2",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[1]),
         .init(id: NSUUID().uuidString,
               caption: "i am gonna rock",
               ownerUID: NSUUID().uuidString,
               likes: 23,
               imageUrl: "suraz1",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[2]),
         .init(id: NSUUID().uuidString,
               caption: "hey there",
               ownerUID: NSUUID().uuidString,
               likes: 990,
               imageUrl: "love1",
-              timeStamp: Date(),
+              timeStamp: Timestamp(),
               user: User.mock_users[3])
     ]
 }

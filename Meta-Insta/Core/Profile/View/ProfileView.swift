@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
-    
+    @Environment(\.dismiss) var dismiss
     let user: User
-    var posts: [Post] {
-        return Post.mock_posts.filter({$0.user?.username == user.username})
-    }
+
     private let gridItems: [GridItem] = [
         .init(.flexible(), spacing: 1),
         .init(.flexible(), spacing: 1),
@@ -24,15 +22,24 @@ struct ProfileView: View {
                 ProfileHeaderView(user: user)
                 //post grid view
                 VStack(spacing: 2) {
-                    PostGridView(posts: posts)
+                    PostGridView(user: user)
                 }
             }
             .navigationTitle(user.username)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem (placement: .navigationBarTrailing) {
-                    Image(systemName: "line.3.horizontal")
+                    Text("...")
+                        .font(.body)
+                        .fontWeight(.bold)
                         .foregroundColor(.black)
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Image(systemName: "chevron.left")
+                        .imageScale(.large)
+                        .onTapGesture {
+                            dismiss()
+                        }
                 }
             }
     }

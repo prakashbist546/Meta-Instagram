@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CurrentUserProfileView: View {
-    let user: User
-    var posts: [Post] {
-        return Post.mock_posts.filter({$0.user?.username == user.username})
-    }
+    @State private var showEditProfileView: Bool = false
+    @StateObject var postViewModel = FeedViewModel()
     
+    let user: User
+        
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -20,14 +20,11 @@ struct CurrentUserProfileView: View {
                 VStack(spacing: 10) {
                     HStack {
                         //profile pic and stats
-                        Image("xaya2")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 80, height: 80)
-                            .clipShape(Circle())
+                        CircularProfileImageView(user: user, size: .large)
+                        
                         Spacer()
                         HStack(spacing: 8) {
-                            UserStatView(value: 5, title: "Posts")
+                            UserStatView(value: 2, title: "Posts")
                             
                             UserStatView(value: 300, title: "Followers")
                             
@@ -40,11 +37,11 @@ struct CurrentUserProfileView: View {
                     
                     VStack (alignment: .leading, spacing: 4){
                         //name and bio
-                        Text("Xaya Pandey")
+                        Text(user.fullname ?? "")
                             .font(.footnote)
                             .fontWeight(.semibold)
                         
-                        Text("Love TS forever")
+                        Text(user.bio ?? "")
                             .font(.footnote)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -53,7 +50,7 @@ struct CurrentUserProfileView: View {
                     //edit profile button
                     HStack {
                         Button {
-                            
+                            showEditProfileView.toggle()
                         } label: {
                             Text("Edit Profile")
                                 .font(.subheadline)
@@ -93,14 +90,14 @@ struct CurrentUserProfileView: View {
                 }
                 ScrollView(.horizontal) {
                     HStack (spacing: 10) {
-                        ForEach(0...5, id: \.self) { index in
+                        ForEach(0...4, id: \.self) { index in
                             VStack {
                                 Circle()
                                     .stroke(lineWidth: 2)
                                     .foregroundColor(.gray)
                                     .frame(width: 80)
                                     .overlay {
-                                        Image(User.mock_users[0].profileImageURL ?? "")
+                                        Image("love\(index)")
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 70, height: 70)
@@ -117,7 +114,7 @@ struct CurrentUserProfileView: View {
                 .scrollIndicators(.hidden)
                 //post grid view
                 VStack(spacing: 1) {
-                    PostGridView(posts: posts)
+                    PostGridView(user: user)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -150,6 +147,9 @@ struct CurrentUserProfileView: View {
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showEditProfileView) {
+            EditProfileView(user: user)
         }
     }
 }

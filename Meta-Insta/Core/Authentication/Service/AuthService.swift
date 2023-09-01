@@ -12,7 +12,7 @@ import Firebase
 
 class AuthService {
     
-    @Published var userSession: FirebaseAuth.User
+    @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     @Published var errorLogin: Bool?
     
@@ -29,6 +29,7 @@ class AuthService {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             self.userSession = result.user
             try await loadUserData()
+            UserSettings.isLoggedOut.set(value: false)
         } catch {
             print("DEBUG: Failed to login user \(error.localizedDescription)")
             errorLogin = true
@@ -52,16 +53,17 @@ class AuthService {
     func loadUserData() async throws {
         self.userSession = Auth.auth().currentUser
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        let snapshot = try await Firestore.firestore().collection("users").document(currentUid).getDocument()
-        self.currentUser = try? snapshot.data(as: User.self)
+        self.currentUser = try await UserService.fetchUserDetails(withId: currentUid)
     }
     
     func signOut() {
         try? Auth.auth().signOut()
         self.userSession = nil
         self.currentUser = nil
+        UserSettings.isLoggedOut.set(value: true)
     }
     
+    @MainActor
     private func uploadUserData(uid: String, username: String, email: String) async {
         let user = User(id: uid, username: username, email: email)
         guard let encodedUser = try? Firestore.Encoder().encode(user) else { return }
